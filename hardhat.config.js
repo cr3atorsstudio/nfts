@@ -9,7 +9,7 @@ const {
 
 module.exports = {
   solidity: "0.8.17",
-  defaultNetwork: "mumbai",
+  // defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
     testnet: {
