@@ -11,7 +11,8 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     uint256 public constant ITEM_FOLLOWER = 1;
     uint256 public constant MAX_SUPPLY_CREATOR = 100;
     uint256 public constant MAX_SUPPLY_FOLLOWER = 500;
-    uint256 public mintedToken = 0;
+    uint256 public mintedCreatorToken = 0;
+    uint256 public mintedSupporterToken = 0;
 
     constructor(string memory initialBaseURI) ERC1155(initialBaseURI) {
         name = "Sample";
@@ -21,15 +22,16 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     function mint(uint256 token_id, uint256 num) external {
         if (token_id == ITEM_CREATOR) {
             mintCreators(num);
+            mintedCreatorToken += num;
         } else if (token_id == ITEM_FOLLOWER) {
             mintFollowers(num);
+            mintedSupporterToken += num;
         }
-        mintedToken += num;
     }
 
     function mintCreators(uint256 num) private {
         require(
-            mintedToken + num <= MAX_SUPPLY_CREATOR,
+            mintedCreatorToken + num <= MAX_SUPPLY_CREATOR,
             "Max token supply reached"
         );
         _mint(msg.sender, ITEM_CREATOR, num, "");
@@ -37,7 +39,7 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
 
     function mintFollowers(uint256 num) private {
         require(
-            mintedToken + num <= MAX_SUPPLY_FOLLOWER,
+            mintedSupporterToken + num <= MAX_SUPPLY_FOLLOWER,
             "Max token supply reached"
         );
         _mint(msg.sender, ITEM_FOLLOWER, num, "");
