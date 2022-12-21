@@ -1,0 +1,15 @@
+{
+  "name": "Supporter",
+  "description": "Holders of this NFT are supporter of Creators Studio. They will take action to close the gender gap on web3.",
+  "image": "ipfs://QmQGQEXd45QbopFasMVoYgVanSygPKwrCwAfxonPx1UfNz",
+  "attributes": [
+    {
+      "trait_type": "Shape",
+      "value": "Square"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Supporter"
+    }
+  ]
+}

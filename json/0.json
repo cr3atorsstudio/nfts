@@ -1,0 +1,15 @@
+{
+  "name": "Creator",
+  "description": "Holders of this NFT are web3 creator of Creators Studio.They will also have access to the token gated Discord.",
+  "image": "ipfs://QmV7FcZDqkDxeuN9vPPqvVtDVmf8XaJ2PKbfaEbyX8jMtz",
+  "attributes": [
+    {
+      "trait_type": "Shape",
+      "value": "Circle"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Creator"
+    }
+  ]
+}
