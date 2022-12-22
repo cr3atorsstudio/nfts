@@ -39,7 +39,7 @@ describe("Sample contract", function () {
         deployTokenFixture
       );
       const now = Math.round(Date.now() / 1000);
-      const amount = 5;
+      const amount = 1;
 
       const mintTx = await hardhatToken.connect(addr1).mint(0, amount);
       await mintTx.wait();
@@ -53,19 +53,15 @@ describe("Sample contract", function () {
         const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
           deployTokenFixture
         );
-        const now = Math.round(Date.now() / 1000);
-        const firstAmount = 99;
-
-        const mintTx = await hardhatToken.connect(addr1).mint(0, firstAmount);
+        const mintTx = await hardhatToken
+          .connect(owner)
+          .mintBatch(addr1.address, [0], [100], []);
         await mintTx.wait();
-        expect(await hardhatToken.balanceOf(addr1.address, 0)).to.be.equal(
-          firstAmount
-        );
 
-        const secondAmount = 9;
+        const secondAmount = 1;
 
         await expect(
-          hardhatToken.connect(addr1).mint(0, secondAmount)
+          hardhatToken.connect(addr2).mint(0, secondAmount)
         ).to.be.rejectedWith(/Max token supply reached/);
       });
 
@@ -73,8 +69,46 @@ describe("Sample contract", function () {
         const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
           deployTokenFixture
         );
+        const mintTx = await hardhatToken
+          .connect(owner)
+          .mintBatch(addr1.address, [1], [100], []);
+        await mintTx.wait();
+
+        const secondAmount = 1;
+
+        await expect(
+          hardhatToken.connect(addr1).mint(1, secondAmount)
+        ).to.be.rejectedWith(/Max token supply reached/);
+      });
+    });
+
+    describe("Max supply of wallet", () => {
+      it("raise error when mint over creators supply limit", async () => {
+        const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
+          deployTokenFixture
+        );
         const now = Math.round(Date.now() / 1000);
-        const firstAmount = 499;
+        const firstAmount = 1;
+
+        const mintTx = await hardhatToken.connect(addr1).mint(0, firstAmount);
+        await mintTx.wait();
+        expect(await hardhatToken.balanceOf(addr1.address, 0)).to.be.equal(
+          firstAmount
+        );
+
+        const secondAmount = 1;
+
+        await expect(
+          hardhatToken.connect(addr1).mint(0, secondAmount)
+        ).to.be.rejectedWith(/Max supply of wallet reached/);
+      });
+
+      it("raise error when mint over supporters supply limit", async () => {
+        const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
+          deployTokenFixture
+        );
+        const now = Math.round(Date.now() / 1000);
+        const firstAmount = 1;
 
         const mintTx = await hardhatToken.connect(addr1).mint(1, firstAmount);
         await mintTx.wait();
@@ -82,11 +116,11 @@ describe("Sample contract", function () {
           firstAmount
         );
 
-        const secondAmount = 2;
+        const secondAmount = 1;
 
         await expect(
           hardhatToken.connect(addr1).mint(1, secondAmount)
-        ).to.be.rejectedWith(/Max token supply reached/);
+        ).to.be.rejectedWith(/Max supply of wallet reached/);
       });
     });
   });

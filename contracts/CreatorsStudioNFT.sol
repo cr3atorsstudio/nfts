@@ -8,11 +8,11 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     string public name;
     string public symbol;
     uint256 public constant ITEM_CREATOR = 0;
-    uint256 public constant ITEM_FOLLOWER = 1;
-    uint256 public constant MAX_SUPPLY_CREATOR = 100;
-    uint256 public constant MAX_SUPPLY_FOLLOWER = 500;
-    uint256 public mintedCreatorToken = 0;
-    uint256 public mintedSupporterToken = 0;
+    uint256 public constant ITEM_SUPPORTER = 1;
+    uint256 public constant MAX_SUPPLY = 100;
+    uint256 public constant MAX_PER_WALLET = 1;
+    uint256 public mintedToken = 0;
+    mapping(address => uint256) public mintedTokens;
 
     constructor(string memory initialBaseURI) ERC1155(initialBaseURI) {
         name = "Sample";
@@ -22,27 +22,45 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     function mint(uint256 token_id, uint256 num) external {
         if (token_id == ITEM_CREATOR) {
             mintCreators(num);
-            mintedCreatorToken += num;
-        } else if (token_id == ITEM_FOLLOWER) {
-            mintFollowers(num);
-            mintedSupporterToken += num;
+        } else if (token_id == ITEM_SUPPORTER) {
+            mintSupporters(num);
         }
+        mintedToken += num;
     }
 
     function mintCreators(uint256 num) private {
+        require(mintedToken + num <= MAX_SUPPLY, "Max token supply reached");
         require(
-            mintedCreatorToken + num <= MAX_SUPPLY_CREATOR,
-            "Max token supply reached"
+            mintedTokens[msg.sender] + num <= MAX_PER_WALLET,
+            "Max supply of wallet reached"
         );
         _mint(msg.sender, ITEM_CREATOR, num, "");
+        mintedTokens[msg.sender] += num;
     }
 
-    function mintFollowers(uint256 num) private {
+    function mintSupporters(uint256 num) private {
+        require(mintedToken + num <= MAX_SUPPLY, "Max token supply reached");
         require(
-            mintedSupporterToken + num <= MAX_SUPPLY_FOLLOWER,
-            "Max token supply reached"
+            mintedTokens[msg.sender] + num <= MAX_PER_WALLET,
+            "Max supply of wallet reached"
         );
-        _mint(msg.sender, ITEM_FOLLOWER, num, "");
+        _mint(msg.sender, ITEM_SUPPORTER, num, "");
+        mintedTokens[msg.sender] += num;
+    }
+
+    function mintBatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) external onlyOwner {
+        uint256 i;
+        uint256 sum = 0;
+        _mintBatch(to, ids, amounts, data);
+        for (i = 0; i < amounts.length; i++) {
+            sum = sum + amounts[i];
+        }
+        mintedToken += sum;
     }
 
     function withdraw() public payable onlyOwner {
