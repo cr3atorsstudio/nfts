@@ -12,7 +12,8 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     uint256 public constant MAX_SUPPLY = 100;
     uint256 public constant MAX_PER_WALLET = 1;
     uint256 public mintedToken = 0;
-    mapping(address => uint256) public mintedTokens;
+    mapping(address => uint256) public mintedCreatorTokens;
+    mapping(address => uint256) public mintedSupporterTokens;
 
     constructor(string memory initialBaseURI) ERC1155(initialBaseURI) {
         name = "Sample";
@@ -31,21 +32,21 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     function mintCreators(uint256 num) private {
         require(mintedToken + num <= MAX_SUPPLY, "Max token supply reached");
         require(
-            mintedTokens[msg.sender] + num <= MAX_PER_WALLET,
+            mintedCreatorTokens[msg.sender] + num <= MAX_PER_WALLET,
             "Max supply of wallet reached"
         );
         _mint(msg.sender, ITEM_CREATOR, num, "");
-        mintedTokens[msg.sender] += num;
+        mintedCreatorTokens[msg.sender] += num;
     }
 
     function mintSupporters(uint256 num) private {
         require(mintedToken + num <= MAX_SUPPLY, "Max token supply reached");
         require(
-            mintedTokens[msg.sender] + num <= MAX_PER_WALLET,
+            mintedSupporterTokens[msg.sender] + num <= MAX_PER_WALLET,
             "Max supply of wallet reached"
         );
         _mint(msg.sender, ITEM_SUPPORTER, num, "");
-        mintedTokens[msg.sender] += num;
+        mintedSupporterTokens[msg.sender] += num;
     }
 
     function mintBatch(

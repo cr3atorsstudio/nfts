@@ -83,6 +83,29 @@ describe("Sample contract", function () {
     });
 
     describe("Max supply of wallet", () => {
+      it("user can mint creator token and supporter token", async () => {
+        const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
+          deployTokenFixture
+        );
+        const now = Math.round(Date.now() / 1000);
+        const firstAmount = 1;
+
+        const mintTx = await hardhatToken.connect(addr1).mint(0, firstAmount);
+        await mintTx.wait();
+        expect(await hardhatToken.balanceOf(addr1.address, 0)).to.be.equal(
+          firstAmount
+        );
+
+        const secondAmount = 1;
+        const secondMintTx = await hardhatToken
+          .connect(addr1)
+          .mint(1, secondAmount);
+        await secondMintTx.wait();
+        expect(await hardhatToken.balanceOf(addr1.address, 0)).to.be.equal(
+          secondAmount
+        );
+      });
+
       it("raise error when mint over creators supply limit", async () => {
         const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
           deployTokenFixture
