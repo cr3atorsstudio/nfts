@@ -43,7 +43,13 @@ describe("Sample contract", function () {
 
       const mintTx = await hardhatToken.connect(addr1).mint(0, amount);
       await mintTx.wait();
+      const mintTx1 = await hardhatToken.connect(addr1).mint(1, amount);
+      await mintTx1.wait();
+
       expect(await hardhatToken.balanceOf(addr1.address, 0)).to.be.equal(
+        amount
+      );
+      expect(await hardhatToken.balanceOf(addr1.address, 1)).to.be.equal(
         amount
       );
     });
