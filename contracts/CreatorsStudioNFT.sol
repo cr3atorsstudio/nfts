@@ -12,6 +12,7 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
     uint256 public constant MAX_SUPPLY = 100;
     uint256 public constant MAX_PER_WALLET = 1;
     uint256 public mintedToken = 0;
+    uint256 public tokenId;
     mapping(address => uint256) public mintedCreatorTokens;
     mapping(address => uint256) public mintedSupporterTokens;
 
@@ -19,6 +20,8 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
         name = "Sample";
         symbol = "sample";
     }
+
+    event NFTMinted(uint256 tokenId);
 
     function mint(uint256 token_id, uint256 num) external {
         if (token_id == ITEM_CREATOR) {
@@ -37,6 +40,7 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
         );
         _mint(msg.sender, ITEM_CREATOR, num, "");
         mintedCreatorTokens[msg.sender] += num;
+        emit NFTMinted(ITEM_CREATOR);
     }
 
     function mintSupporters(uint256 num) private {
@@ -47,6 +51,7 @@ contract CreatorsStudioNFT is ERC1155, Ownable {
         );
         _mint(msg.sender, ITEM_SUPPORTER, num, "");
         mintedSupporterTokens[msg.sender] += num;
+        emit NFTMinted(ITEM_SUPPORTER);
     }
 
     function mintBatch(
